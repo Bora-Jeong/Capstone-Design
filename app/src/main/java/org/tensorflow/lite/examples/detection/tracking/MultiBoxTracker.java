@@ -63,6 +63,7 @@ public class MultiBoxTracker {
   private final Paint boxPaint = new Paint();
   private final float textSizePx;
   private final BorderedText borderedText;
+  private final BorderedText posText;
   private Matrix frameToCanvasMatrix;
   private int frameWidth;
   private int frameHeight;
@@ -84,6 +85,7 @@ public class MultiBoxTracker {
         TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_DIP, context.getResources().getDisplayMetrics());
     borderedText = new BorderedText(textSizePx);
+    posText = new BorderedText(textSizePx);
   }
 
   public synchronized void setFrameConfiguration(
@@ -151,6 +153,9 @@ public class MultiBoxTracker {
       // labelString);
       borderedText.drawText(
           canvas, trackedPos.left + cornerSize, trackedPos.top, labelString + "%", boxPaint);
+
+      final String posString = String.format("LT(%.2f, %.2f) RB(%.2f, %.2f)", trackedPos.left, trackedPos.top, trackedPos.right, trackedPos.bottom);
+      posText.drawText(canvas, trackedPos.left+cornerSize, trackedPos.top + 50, posString, boxPaint);
     }
   }
 
