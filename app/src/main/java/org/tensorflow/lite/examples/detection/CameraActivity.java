@@ -17,9 +17,13 @@
 package org.tensorflow.lite.examples.detection;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Fragment;
+import android.content.ContentUris;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.hardware.Camera;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
@@ -29,14 +33,19 @@ import android.media.Image;
 import android.media.Image.Plane;
 import android.media.ImageReader;
 import android.media.ImageReader.OnImageAvailableListener;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Trace;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
+
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.util.Size;
 import android.view.Surface;
 import android.view.View;
@@ -49,6 +58,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+
+import java.io.File;
 import java.nio.ByteBuffer;
 import org.tensorflow.lite.examples.detection.env.ImageUtils;
 import org.tensorflow.lite.examples.detection.env.Logger;
@@ -86,6 +97,7 @@ public abstract class CameraActivity extends AppCompatActivity
   private SwitchCompat apiSwitchCompat;
   private TextView threadsTextView;
 
+  private boolean isPointCloudDataLoaded = false;
 
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
@@ -168,6 +180,107 @@ public abstract class CameraActivity extends AppCompatActivity
 
     plusImageView.setOnClickListener(this);
     minusImageView.setOnClickListener(this);
+
+    findViewById(R.id.btnImport).setOnClickListener((View view) -> {
+      if(!isPointCloudDataLoaded){
+        openPointCloud();
+      }
+    });
+  }
+
+
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent resultData) {
+    super.onActivityResult(requestCode, resultCode, resultData);
+    if(requestCode == 42 && resultCode == Activity.RESULT_OK && resultData != null) {
+      Uri uri = resultData.getData();
+      this.getApplicationContext().getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+      File jsonFile = new File(getPathFromUri(uri));
+      try{
+
+      }
+      catch (Exception e){
+
+      };
+    }
+  }
+
+  private String getPathFromUri(Uri uri){
+    if(DocumentsContract.isDocumentUri(getApplicationContext(), uri)){
+      if(isExternalStorageDocument(uri)){
+        String docId = DocumentsContract.getDocumentId(uri);
+        String[] split = docId.split(":");
+        String type = split[0];
+
+        if("primary".equalsIgnoreCase(type)){
+          return Environment.getExternalStorageDirectory().toString() + "/" + split[1];
+        }
+      }
+      else if(isDownloadsDocument(uri)){
+        String id = DocumentsContract.getDocumentId(uri);
+        Uri contentUri = ContentUris.withAppendedId(uri.parse("content://downloads/public_downloads"), Long.parseLong(id));
+        return getDataColumn(getApplicationContext(), contentUri, null,null);
+      }
+      else  if(isMediaDocument(uri)){
+        String docId = DocumentsContract.getDocumentId(uri);
+        String[] split = docId.split(":");
+        String type = split[0];
+
+        Uri contentUri = null;
+        if(type == "image") contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        else if(type == "video") contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+        else if(type == "audio") contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+
+        String selection = "_id=?";
+        String[] selectionArgs = {split[1]};
+        return getDataColumn(getApplicationContext(), contentUri, selection, selectionArgs);
+      }
+    }
+    else if("content".equalsIgnoreCase(uri.getScheme())){
+      return getDataColumn(getApplicationContext(), uri, null, null);
+    }
+    else if("file".equalsIgnoreCase(uri.getScheme())){
+      return uri.getPath();
+    }
+    return "";
+  }
+
+  private boolean isExternalStorageDocument(Uri uri) {
+    return "com.android.externalstorage.documents" == uri.getAuthority();
+  }
+
+  private boolean isDownloadsDocument(Uri uri) {
+    return "com.android.providers.downloads.documents" == uri.getAuthority();
+  }
+
+  private boolean isMediaDocument(Uri uri) {
+    return "com.android.providers.media.documents" == uri.getAuthority();
+  }
+
+  private String getDataColumn(Context context, Uri uri, String selection, String[] selectionArgs){
+    Cursor cursor = null;
+    String column = "_data";
+    String[] projection = {column};
+    try {
+      cursor = context.getContentResolver().query(
+              uri, projection, selection, selectionArgs,
+              null
+      );
+      if (cursor != null && cursor.moveToFirst()) {
+        int column_index = cursor.getColumnIndexOrThrow(column);
+        return cursor.getString(column_index);
+      }
+    } finally {
+      cursor.close();
+    }
+    return null;
+  }
+
+
+  private void openPointCloud(){
+    Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+    intent.addCategory(Intent.CATEGORY_OPENABLE);
+    intent.setType("*/*");
   }
 
   protected int[] getRgbBytes() {
