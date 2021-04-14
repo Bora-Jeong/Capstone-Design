@@ -1,0 +1,36 @@
+{
+  "buildFiles": [
+    "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\src\\main\\cpp\\CMakeLists.txt",
+    "C:\\Users\\JeongBoRa\\AppData\\Local\\Android\\Sdk\\ndk\\21.1.6352462\\build\\cmake\\android.toolchain.cmake",
+    "C:\\Users\\JeongBoRa\\AppData\\Local\\Android\\Sdk\\ndk\\21.1.6352462\\build\\cmake\\platforms.cmake"
+  ],
+  "cleanCommands": [
+    "C:\\Users\\JeongBoRa\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe -C \"C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\.cxx\\cmake\\interpreterRelease\\x86\" clean"
+  ],
+  "buildTargetsCommand": "C:\\Users\\JeongBoRa\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe  -C \"C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\.cxx\\cmake\\interpreterRelease\\x86\" {LIST_OF_TARGETS_TO_BUILD}",
+  "libraries": {
+    "KalmanTracker-Release-x86": {
+      "artifactName": "KalmanTracker",
+      "buildCommand": "C:\\Users\\JeongBoRa\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe -C \"C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\.cxx\\cmake\\interpreterRelease\\x86\" KalmanTracker",
+      "abi": "x86",
+      "output": "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\build\\intermediates\\cmake\\interpreterRelease\\obj\\x86\\libKalmanTracker.so",
+      "runtimeFiles": [
+        "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\opencv\\native\\libs\\x86\\libopencv_java4.so"
+      ]
+    },
+    "native-lib-Release-x86": {
+      "artifactName": "native-lib",
+      "buildCommand": "C:\\Users\\JeongBoRa\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe -C \"C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\.cxx\\cmake\\interpreterRelease\\x86\" native-lib",
+      "abi": "x86",
+      "output": "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\build\\intermediates\\cmake\\interpreterRelease\\obj\\x86\\libnative-lib.so",
+      "runtimeFiles": []
+    },
+    "HungarianAlgorithm-Release-x86": {
+      "artifactName": "HungarianAlgorithm",
+      "buildCommand": "C:\\Users\\JeongBoRa\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe -C \"C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\.cxx\\cmake\\interpreterRelease\\x86\" HungarianAlgorithm",
+      "abi": "x86",
+      "output": "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\build\\intermediates\\cmake\\interpreterRelease\\obj\\x86\\libHungarianAlgorithm.so",
+      "runtimeFiles": []
+    }
+  }
+}

@@ -1,0 +1,19 @@
+[
+{
+  "directory": "C:/Users/JeongBoRa/Documents/GitHub/Capstone-Design/app/.cxx/cmake/taskApiRelease/x86",
+  "command": "C:\\Users\\JeongBoRa\\AppData\\Local\\Android\\Sdk\\ndk\\21.1.6352462\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=i686-none-linux-android28 --gcc-toolchain=C:/Users/JeongBoRa/AppData/Local/Android/Sdk/ndk/21.1.6352462/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=C:/Users/JeongBoRa/AppData/Local/Android/Sdk/ndk/21.1.6352462/toolchains/llvm/prebuilt/windows-x86_64/sysroot  -Dnative_lib_EXPORTS -IC:/Users/JeongBoRa/Documents/GitHub/Capstone-Design/opencv/native/jni/include  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -std=gnu++11 -O2 -DNDEBUG  -fPIC   -o CMakeFiles\\native-lib.dir\\native-lib.cpp.o -c C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\src\\main\\cpp\\native-lib.cpp",
+  "file": "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\src\\main\\cpp\\native-lib.cpp"
+},
+
+{
+  "directory": "C:/Users/JeongBoRa/Documents/GitHub/Capstone-Design/app/.cxx/cmake/taskApiRelease/x86",
+  "command": "C:\\Users\\JeongBoRa\\AppData\\Local\\Android\\Sdk\\ndk\\21.1.6352462\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=i686-none-linux-android28 --gcc-toolchain=C:/Users/JeongBoRa/AppData/Local/Android/Sdk/ndk/21.1.6352462/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=C:/Users/JeongBoRa/AppData/Local/Android/Sdk/ndk/21.1.6352462/toolchains/llvm/prebuilt/windows-x86_64/sysroot  -DKalmanTracker_EXPORTS -IC:/Users/JeongBoRa/Documents/GitHub/Capstone-Design/opencv/native/jni/include  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -std=gnu++11 -O2 -DNDEBUG  -fPIC   -o CMakeFiles\\KalmanTracker.dir\\KalmanTracker.cpp.o -c C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\src\\main\\cpp\\KalmanTracker.cpp",
+  "file": "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\src\\main\\cpp\\KalmanTracker.cpp"
+},
+
+{
+  "directory": "C:/Users/JeongBoRa/Documents/GitHub/Capstone-Design/app/.cxx/cmake/taskApiRelease/x86",
+  "command": "C:\\Users\\JeongBoRa\\AppData\\Local\\Android\\Sdk\\ndk\\21.1.6352462\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=i686-none-linux-android28 --gcc-toolchain=C:/Users/JeongBoRa/AppData/Local/Android/Sdk/ndk/21.1.6352462/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=C:/Users/JeongBoRa/AppData/Local/Android/Sdk/ndk/21.1.6352462/toolchains/llvm/prebuilt/windows-x86_64/sysroot  -DHungarianAlgorithm_EXPORTS -IC:/Users/JeongBoRa/Documents/GitHub/Capstone-Design/opencv/native/jni/include  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -std=gnu++11 -O2 -DNDEBUG  -fPIC   -o CMakeFiles\\HungarianAlgorithm.dir\\HungarianAlgorithm.cpp.o -c C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\src\\main\\cpp\\HungarianAlgorithm.cpp",
+  "file": "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\src\\main\\cpp\\HungarianAlgorithm.cpp"
+}
+]

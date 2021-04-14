@@ -63,7 +63,7 @@ public class MultiBoxTracker {
   private final Paint boxPaint = new Paint();
   private final float textSizePx;
   private final BorderedText borderedText;
-  private final BorderedText posText;
+  //private final BorderedText posText;
   private Matrix frameToCanvasMatrix;
   private int frameWidth;
   private int frameHeight;
@@ -85,7 +85,7 @@ public class MultiBoxTracker {
         TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_DIP, context.getResources().getDisplayMetrics());
     borderedText = new BorderedText(textSizePx);
-    posText = new BorderedText(textSizePx);
+    //posText = new BorderedText(textSizePx);
   }
 
   public synchronized void setFrameConfiguration(
@@ -145,17 +145,18 @@ public class MultiBoxTracker {
       float cornerSize = Math.min(trackedPos.width(), trackedPos.height()) / 8.0f;
       canvas.drawRoundRect(trackedPos, cornerSize, cornerSize, boxPaint);
 
+
       final String labelString =
           !TextUtils.isEmpty(recognition.title)
-              ? String.format("%s %.2f", recognition.title, (100 * recognition.detectionConfidence))
+              ? String.format("ID%s %s %.2f", recognition.id, recognition.title, (100 * recognition.detectionConfidence))
               : String.format("%.2f", (100 * recognition.detectionConfidence));
-      //            borderedText.drawText(canvas, trackedPos.left + cornerSize, trackedPos.top,
-      // labelString);
+
+
       borderedText.drawText(
           canvas, trackedPos.left + cornerSize, trackedPos.top, labelString + "%", boxPaint);
 
-      final String posString = String.format("LT(%.2f, %.2f) RB(%.2f, %.2f)", trackedPos.left, trackedPos.top, trackedPos.right, trackedPos.bottom);
-      posText.drawText(canvas, trackedPos.left+cornerSize, trackedPos.top + 50, posString, boxPaint);
+      //final String posString = String.format("LT(%.2f, %.2f) RB(%.2f, %.2f)", trackedPos.left, trackedPos.top, trackedPos.right, trackedPos.bottom);
+      //posText.drawText(canvas, trackedPos.left+cornerSize, trackedPos.top + 50, posString, boxPaint);
     }
   }
 
@@ -196,9 +197,11 @@ public class MultiBoxTracker {
     for (final Pair<Float, Recognition> potential : rectsToTrack) {
       final TrackedRecognition trackedRecognition = new TrackedRecognition();
       trackedRecognition.detectionConfidence = potential.first;
+      trackedRecognition.id = potential.second.getId();
       trackedRecognition.location = new RectF(potential.second.getLocation());
       trackedRecognition.title = potential.second.getTitle();
-      trackedRecognition.color = COLORS[trackedObjects.size()];
+      int colorIdx = Integer.parseInt(trackedRecognition.id) % COLORS.length;
+      trackedRecognition.color = COLORS[colorIdx];
       trackedObjects.add(trackedRecognition);
 
       if (trackedObjects.size() >= COLORS.length) {
@@ -212,5 +215,6 @@ public class MultiBoxTracker {
     float detectionConfidence;
     int color;
     String title;
+    String id;
   }
 }

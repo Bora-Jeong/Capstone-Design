@@ -1,0 +1,9 @@
+Executable : C:\Users\JeongBoRa\AppData\Local\Android\Sdk\cmake\3.10.2.4988404\bin\ninja.exe
+arguments : 
+-C
+C:\Users\JeongBoRa\Documents\GitHub\Capstone-Design\app\.cxx\cmake\taskApiDebug\arm64-v8a
+HungarianAlgorithm
+KalmanTracker
+native-lib
+jvmArgs : 
+
