@@ -45,6 +45,8 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import org.tensorflow.lite.examples.detection.env.ImageUtils
@@ -63,7 +65,6 @@ import org.opencv.calib3d.Calib3d
 import org.opencv.core.*
 import org.tensorflow.lite.examples.detection.point.*
 import java.net.URISyntaxException
-import java.time.LocalDateTime
 
 abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, PreviewCallback, CompoundButton.OnCheckedChangeListener, View.OnClickListener {
     protected var previewWidth = 0
@@ -92,7 +93,7 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, P
     private var threadsTextView: TextView? = null
 
     // posent code
-/*    private var isPointCloudDataLoaded = false
+    private var isPointCloudDataLoaded = false
     var pointCloudData: PointCloudData? = null
     val jacksonMapper = jacksonObjectMapper()
     var fovX = 0.0f
@@ -147,7 +148,8 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, P
     val logDataPoseNet = mutableListOf<List<String>>()
     val logDataHUD = mutableListOf<List<String>>()
     var baseTimestamp:Long = 0
-    private var mSocket: Socket? = null*/
+    private var mSocket: Socket? = null
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -218,7 +220,7 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, P
         //findViewById<Button>(R.id.btnImport).text = stringFromJNI()
 
         findViewById<View>(R.id.btnImport).setOnClickListener { view: View? ->
-/*            if(!isPointCloudDataLoaded) {
+            if(!isPointCloudDataLoaded) {
                 openPointCloud()
                 try {
                     val opts = IO.Options()
@@ -239,16 +241,16 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, P
                 }
             }else{
                 exportLog()
-            }*/
+            }
         }
     }
 
 
-    /*
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
         super.onActivityResult(requestCode, resultCode, resultData)
-        if (requestCode == 42 && resultCode == RESULT_OK && resultData != null) {
-            val uri = resultData.data
+        if (requestCode == READ_REQUEST_CODE && resultCode == RESULT_OK && resultData != null) {
+            val uri = resultData.data ?: return
             this.applicationContext.contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
             val jsonFile = File(getPathFromUri(uri))
             try {
@@ -324,32 +326,53 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, P
     }
 
     private fun getPathFromUri(uri: Uri): String? {
-        if (DocumentsContract.isDocumentUri(applicationContext, uri)) {
-            if (isExternalStorageDocument(uri)) {
+        val context = this.applicationContext
+        if(DocumentsContract.isDocumentUri(context, uri)){
+            if (isExternalStorageDocument(uri)){
                 val docId = DocumentsContract.getDocumentId(uri)
-                val split: Array<String> = docId.split(":").toTypedArray()
+                val split = docId.split(":").toTypedArray()
                 val type = split[0]
+
                 if ("primary".equals(type, ignoreCase = true)) {
-                    return Environment.getExternalStorageDirectory().toString() + "/" + split[1]
+                    return Environment.getExternalStorageDirectory()
+                            .toString() + "/" + split[1]
                 }
-            } else if (isDownloadsDocument(uri)) {
+            }else if (isDownloadsDocument(uri)) {
                 val id = DocumentsContract.getDocumentId(uri)
-                val contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), id.toLong())
-                return getDataColumn(applicationContext, contentUri, null, null)
-            } else if (isMediaDocument(uri)) {
+                val contentUri = ContentUris.withAppendedId(
+                        Uri.parse("content://downloads/public_downloads"), id.toLong()
+                )
+
+                return getDataColumn(context!!, contentUri, null, null)!!
+            }else if (isMediaDocument(uri)) {
                 val docId = DocumentsContract.getDocumentId(uri)
-                val split: Array<String> = docId.split(":").toTypedArray()
+                val split = docId.split(":")
                 val type = split[0]
-                var contentUri: Uri? = null
-                if (type === "image") contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI else if (type === "video") contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI else if (type === "audio") contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+
+                var contentUri:Uri? = null
+                when (type) {
+                    "image" -> {
+                        contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                    }
+                    "video" -> {
+                        contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+                    }
+                    "audio" -> {
+                        contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+                    }
+                }
+
                 val selection = "_id=?"
-                val selectionArgs = arrayOf(split[1])
-                return getDataColumn(applicationContext, contentUri, selection, selectionArgs)
+                val selectionArgs:Array<String?>? = arrayOf(split[1])
+
+                return getDataColumn(context!!, contentUri, selection, selectionArgs)!!
             }
-        } else if ("content".equals(uri.scheme, ignoreCase = true)) {
-            return getDataColumn(applicationContext, uri, null, null)
-        } else if ("file".equals(uri.scheme, ignoreCase = true)) {
-            return uri.path
+        }else if ("content".equals(uri.scheme, ignoreCase = true)) {
+            return getDataColumn(context!!, uri, null, null)!!
+        }
+        // File
+        else if ("file".equals(uri.scheme, ignoreCase = true)) {
+            return uri.path!!
         }
         return ""
     }
@@ -388,7 +411,7 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, P
                     pointCloudData!!.cameraMatrix.toFloatArray(),
                     0
             )
-            //calcInvRT()
+
 
             for (i in 0 until MODELVIEWPROJECTION_MAT_ROW){
                 for (j in 0 until MODELVIEWPROJECTION_MAT_COLUMN){
@@ -445,9 +468,9 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, P
                 clusterIndexes.add(cluster.size)
             }
 
-            CreateOctree(pointCloud = pointCloudArray.toFloatArray(),
-                    clusterIndex = clusterIndexes.toIntArray()
-            )
+//            CreateOctree(pointCloud = pointCloudArray.toFloatArray(),
+//                    clusterIndex = clusterIndexes.toIntArray()
+//            )
 
             isPointCloudDataLoaded = true
 
@@ -594,24 +617,24 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, P
 
 
     private fun isExternalStorageDocument(uri: Uri): Boolean {
-        return "com.android.externalstorage.documents" === uri.authority
+        return "com.android.externalstorage.documents" == uri.authority
     }
 
     private fun isDownloadsDocument(uri: Uri): Boolean {
-        return "com.android.providers.downloads.documents" === uri.authority
+        return "com.android.providers.downloads.documents" == uri.authority
     }
 
     private fun isMediaDocument(uri: Uri): Boolean {
-        return "com.android.providers.media.documents" === uri.authority
+        return "com.android.providers.media.documents" == uri.authority
     }
 
-    private fun getDataColumn(context: Context, uri: Uri?, selection: String?, selectionArgs: Array<String>?): String? {
+    private fun getDataColumn(context: Context, uri: Uri?, selection: String?, selectionArgs: Array<String?>?): String? {
         var cursor: Cursor? = null
         val column = "_data"
         val projection = arrayOf(column)
         try {
             cursor = context.contentResolver.query(
-                    uri, projection, selection, selectionArgs,
+                    uri!!, projection, selection, selectionArgs,
                     null
             )
             if (cursor != null && cursor.moveToFirst()) {
@@ -623,12 +646,16 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, P
         }
         return null
     }
-*/
+
 
     private fun openPointCloud() {
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
-        intent.addCategory(Intent.CATEGORY_OPENABLE)
-        intent.type = "*/*"
+        val intent =
+                Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                    addCategory(Intent.CATEGORY_OPENABLE)
+                    type = "*/*"
+                }
+
+        startActivityForResult(intent, READ_REQUEST_CODE)
     }
 
 
@@ -722,8 +749,16 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, P
     public override fun onStart() {
         super.onStart()
         LOGGER.d("onStart $this")
+        val permissionStorage = ContextCompat.checkSelfPermission(
+               applicationContext,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
+        if (permissionStorage != PackageManager.PERMISSION_GRANTED) {
+            //requestStoragePermission()
+        }
         super.onStart()
     }
+
 
     public override fun onResume() {
         super.onResume()
@@ -757,7 +792,6 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, P
     public override fun onDestroy() {
         super.onDestroy()
         LOGGER.d("onDestroy $this")
-        super.onDestroy()
     }
 
     protected fun runInBackground(r: Runnable?) {
@@ -911,9 +945,10 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, P
         }
     }
 
-//    private external fun CreateOctree(pointCloud: FloatArray, clusterIndex: IntArray)
-//    private external fun SearchNearestPoint(point:FloatArray):FloatArray
-//    private external fun SearchNearestPoints(point:FloatArray):FloatArray
+    // private external fun CreateOctree(pointCloud: FloatArray, clusterIndex: IntArray)
+    //private external fun SearchNearestPoint(point:FloatArray):FloatArray
+   //  private external fun SearchNearestPoints(point:FloatArray):FloatArray
+
 
     protected fun showFrameInfo(frameInfo: String?) {
         frameValueTextView!!.text = frameInfo
