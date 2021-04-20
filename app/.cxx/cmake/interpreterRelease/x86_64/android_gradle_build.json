@@ -66,7 +66,11 @@
       ],
       "headers": [],
       "output": "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\build\\intermediates\\cmake\\interpreterRelease\\obj\\x86_64\\libnative-lib.so",
-      "runtimeFiles": []
+      "runtimeFiles": [
+        "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\build\\intermediates\\cmake\\interpreterRelease\\obj\\x86_64\\libKalmanTracker.so",
+        "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\build\\intermediates\\cmake\\interpreterRelease\\obj\\x86_64\\libHungarianAlgorithm.so",
+        "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\opencv\\native\\libs\\x86_64\\libopencv_java4.so"
+      ]
     }
   },
   "toolchains": {

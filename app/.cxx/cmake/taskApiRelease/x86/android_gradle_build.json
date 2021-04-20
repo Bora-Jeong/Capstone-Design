@@ -49,7 +49,11 @@
       ],
       "headers": [],
       "output": "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\build\\intermediates\\cmake\\taskApiRelease\\obj\\x86\\libnative-lib.so",
-      "runtimeFiles": []
+      "runtimeFiles": [
+        "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\build\\intermediates\\cmake\\taskApiRelease\\obj\\x86\\libKalmanTracker.so",
+        "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\build\\intermediates\\cmake\\taskApiRelease\\obj\\x86\\libHungarianAlgorithm.so",
+        "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\opencv\\native\\libs\\x86\\libopencv_java4.so"
+      ]
     },
     "HungarianAlgorithm-Release-x86": {
       "buildCommand": "C:\\Users\\JeongBoRa\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe -C \"C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\.cxx\\cmake\\taskApiRelease\\x86\" HungarianAlgorithm",

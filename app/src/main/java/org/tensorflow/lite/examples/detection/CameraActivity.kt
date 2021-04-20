@@ -16,6 +16,7 @@
 package org.tensorflow.lite.examples.detection
 
 import android.Manifest
+import android.app.Activity
 import android.app.Fragment
 import android.content.ContentUris
 import android.content.Context
@@ -37,11 +38,13 @@ import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.util.Log
 import android.util.Size
+import android.util.SparseIntArray
 import android.view.Surface
 import android.view.View
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.view.WindowManager
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import androidx.appcompat.widget.Toolbar
@@ -59,12 +62,18 @@ import com.github.nkzawa.engineio.client.transports.WebSocket
 import com.github.nkzawa.socketio.client.IO
 import com.github.nkzawa.socketio.client.IO.socket
 import com.github.nkzawa.socketio.client.Socket
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.pose.PoseDetection
+import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
 import java.io.File
 import kotlin.math.atan
 import org.opencv.calib3d.Calib3d
 import org.opencv.core.*
 import org.tensorflow.lite.examples.detection.point.*
+import org.tensorflow.lite.examples.detection.pose.FrameMetadata
+import org.tensorflow.lite.examples.detection.pose.PoseDetectorProcessor
 import java.net.URISyntaxException
+import java.nio.ByteBuffer
 
 abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, PreviewCallback, CompoundButton.OnCheckedChangeListener, View.OnClickListener {
     protected var previewWidth = 0
@@ -152,14 +161,15 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, P
 
 
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         LOGGER.d("onCreate $this")
         super.onCreate(null)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         setContentView(R.layout.tfe_od_activity_camera)
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        supportActionBar!!.setDisplayShowTitleEnabled(false)
+        //val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        //setSupportActionBar(toolbar)
+        //supportActionBar!!.setDisplayShowTitleEnabled(false)
         if (hasPermission()) {
             setFragment()
         } else {
@@ -218,6 +228,7 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, P
         minusImageView?.setOnClickListener(this)
 
         //findViewById<Button>(R.id.btnImport).text = stringFromJNI()
+
 
         findViewById<View>(R.id.btnImport).setOnClickListener { view: View? ->
             if(!isPointCloudDataLoaded) {
@@ -690,6 +701,7 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, P
         yuvBytes[0] = bytes
         luminanceStride = previewWidth
         imageConverter = Runnable { ImageUtils.convertYUV420SPToARGB8888(bytes, previewWidth, previewHeight, rgbBytes) }
+
         postInferenceCallback = Runnable {
             camera.addCallbackBuffer(bytes)
             isProcessingFrame = false
@@ -708,6 +720,7 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, P
         }
         try {
             val image = reader.acquireLatestImage() ?: return
+
             if (isProcessingFrame) {
                 image.close()
                 return
@@ -737,7 +750,9 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, P
                 image.close()
                 isProcessingFrame = false
             }
+
             processImage()
+
         } catch (e: Exception) {
             LOGGER.e(e, "Exception!")
             Trace.endSection()
@@ -961,6 +976,7 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, P
     protected fun showInference(inferenceTime: String?) {
         inferenceTimeTextView!!.text = inferenceTime
     }
+
 
     protected abstract fun processImage()
     protected abstract fun onPreviewSizeChosen(size: Size?, rotation: Int)

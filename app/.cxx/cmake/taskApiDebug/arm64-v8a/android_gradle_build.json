@@ -34,23 +34,6 @@
         "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\opencv\\native\\libs\\arm64-v8a\\libopencv_java4.so"
       ]
     },
-    "native-lib-Debug-arm64-v8a": {
-      "buildCommand": "C:\\Users\\JeongBoRa\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe -C \"C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\.cxx\\cmake\\taskApiDebug\\arm64-v8a\" native-lib",
-      "buildType": "debug",
-      "toolchain": "3522769163",
-      "abi": "arm64-v8a",
-      "artifactName": "native-lib",
-      "files": [
-        {
-          "src": "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\src\\main\\cpp\\native-lib.cpp",
-          "flagsOrdinal": 1,
-          "workingDirectoryOrdinal": 0
-        }
-      ],
-      "headers": [],
-      "output": "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\build\\intermediates\\cmake\\taskApiDebug\\obj\\arm64-v8a\\libnative-lib.so",
-      "runtimeFiles": []
-    },
     "HungarianAlgorithm-Debug-arm64-v8a": {
       "buildCommand": "C:\\Users\\JeongBoRa\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe -C \"C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\.cxx\\cmake\\taskApiDebug\\arm64-v8a\" HungarianAlgorithm",
       "buildType": "debug",
@@ -67,6 +50,27 @@
       "headers": [],
       "output": "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\build\\intermediates\\cmake\\taskApiDebug\\obj\\arm64-v8a\\libHungarianAlgorithm.so",
       "runtimeFiles": []
+    },
+    "native-lib-Debug-arm64-v8a": {
+      "buildCommand": "C:\\Users\\JeongBoRa\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe -C \"C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\.cxx\\cmake\\taskApiDebug\\arm64-v8a\" native-lib",
+      "buildType": "debug",
+      "toolchain": "3522769163",
+      "abi": "arm64-v8a",
+      "artifactName": "native-lib",
+      "files": [
+        {
+          "src": "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\src\\main\\cpp\\native-lib.cpp",
+          "flagsOrdinal": 1,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [],
+      "output": "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\build\\intermediates\\cmake\\taskApiDebug\\obj\\arm64-v8a\\libnative-lib.so",
+      "runtimeFiles": [
+        "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\build\\intermediates\\cmake\\taskApiDebug\\obj\\arm64-v8a\\libKalmanTracker.so",
+        "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\build\\intermediates\\cmake\\taskApiDebug\\obj\\arm64-v8a\\libHungarianAlgorithm.so",
+        "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\opencv\\native\\libs\\arm64-v8a\\libopencv_java4.so"
+      ]
     }
   },
   "toolchains": {

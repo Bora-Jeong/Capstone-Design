@@ -36,7 +36,7 @@ include rules.ninja
 #############################################
 # Order-only phony target for native-lib
 
-build cmake_object_order_depends_target_native-lib: phony
+build cmake_object_order_depends_target_native-lib: phony || cmake_object_order_depends_target_HungarianAlgorithm cmake_object_order_depends_target_KalmanTracker
 build CMakeFiles/native-lib.dir/native-lib.cpp.o: CXX_COMPILER__native-lib C$:/Users/JeongBoRa/Documents/GitHub/Capstone-Design/app/src/main/cpp/native-lib.cpp || cmake_object_order_depends_target_native-lib
   DEFINES = -Dnative_lib_EXPORTS
   DEP_FILE = CMakeFiles\native-lib.dir\native-lib.cpp.o.d
@@ -52,10 +52,10 @@ build CMakeFiles/native-lib.dir/native-lib.cpp.o: CXX_COMPILER__native-lib C$:/U
 #############################################
 # Link the shared library C:\Users\JeongBoRa\Documents\GitHub\Capstone-Design\app\build\intermediates\cmake\taskApiRelease\obj\x86_64\libnative-lib.so
 
-build C$:/Users/JeongBoRa/Documents/GitHub/Capstone-Design/app/build/intermediates/cmake/taskApiRelease/obj/x86_64/libnative-lib.so: CXX_SHARED_LIBRARY_LINKER__native-lib CMakeFiles/native-lib.dir/native-lib.cpp.o | C$:/Users/JeongBoRa/AppData/Local/Android/Sdk/ndk/21.1.6352462/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/x86_64-linux-android/28/liblog.so
+build C$:/Users/JeongBoRa/Documents/GitHub/Capstone-Design/app/build/intermediates/cmake/taskApiRelease/obj/x86_64/libnative-lib.so: CXX_SHARED_LIBRARY_LINKER__native-lib CMakeFiles/native-lib.dir/native-lib.cpp.o | C$:/Users/JeongBoRa/AppData/Local/Android/Sdk/ndk/21.1.6352462/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/x86_64-linux-android/28/liblog.so C$:/Users/JeongBoRa/AppData/Local/Android/Sdk/ndk/21.1.6352462/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/x86_64-linux-android/28/libandroid.so C$:/Users/JeongBoRa/Documents/GitHub/Capstone-Design/app/build/intermediates/cmake/taskApiRelease/obj/x86_64/libKalmanTracker.so C$:/Users/JeongBoRa/Documents/GitHub/Capstone-Design/app/build/intermediates/cmake/taskApiRelease/obj/x86_64/libHungarianAlgorithm.so C$:/Users/JeongBoRa/Documents/GitHub/Capstone-Design/opencv/native/libs/x86_64/libopencv_java4.so || C$:/Users/JeongBoRa/Documents/GitHub/Capstone-Design/app/build/intermediates/cmake/taskApiRelease/obj/x86_64/libHungarianAlgorithm.so C$:/Users/JeongBoRa/Documents/GitHub/Capstone-Design/app/build/intermediates/cmake/taskApiRelease/obj/x86_64/libKalmanTracker.so
   LANGUAGE_COMPILE_FLAGS = -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -std=gnu++11 -O2 -DNDEBUG
   LINK_FLAGS = -Wl,--exclude-libs,libgcc.a -Wl,--exclude-libs,libgcc_real.a -Wl,--exclude-libs,libatomic.a -static-libstdc++ -Wl,--build-id -Wl,--fatal-warnings -Wl,--no-undefined -Qunused-arguments
-  LINK_LIBRARIES = -llog -latomic -lm
+  LINK_LIBRARIES = -llog -landroid C:/Users/JeongBoRa/Documents/GitHub/Capstone-Design/app/build/intermediates/cmake/taskApiRelease/obj/x86_64/libKalmanTracker.so C:/Users/JeongBoRa/Documents/GitHub/Capstone-Design/app/build/intermediates/cmake/taskApiRelease/obj/x86_64/libHungarianAlgorithm.so C:/Users/JeongBoRa/Documents/GitHub/Capstone-Design/opencv/native/libs/x86_64/libopencv_java4.so -latomic -lm
   OBJECT_DIR = CMakeFiles\native-lib.dir
   POST_BUILD = cd .
   PRE_LINK = cd .

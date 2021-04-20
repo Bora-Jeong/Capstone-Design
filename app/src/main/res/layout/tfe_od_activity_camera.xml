@@ -34,31 +34,17 @@
             android:layout_height="match_parent"
             tools:context="org.tensorflow.demo.CameraActivity" >
 
+            <Button
+                android:id="@+id/btnImport"
+                android:layout_width="50dp"
+                android:layout_height="31dp"
+                android:text="Import" />
         </FrameLayout>
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:layout_alignParentTop="true"
-            android:background="@color/tfe_semi_transparent">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/tfl2_logo" />
-        </androidx.appcompat.widget.Toolbar>
 
     </RelativeLayout>
 
     <include
         android:id="@+id/bottom_sheet_layout"
         layout="@layout/tfe_od_layout_bottom_sheet" />
-
-    <Button
-        android:id="@+id/btnImport"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Import" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

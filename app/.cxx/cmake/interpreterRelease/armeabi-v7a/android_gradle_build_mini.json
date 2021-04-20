@@ -23,7 +23,11 @@
       "buildCommand": "C:\\Users\\JeongBoRa\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe -C \"C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\.cxx\\cmake\\interpreterRelease\\armeabi-v7a\" native-lib",
       "abi": "armeabi-v7a",
       "output": "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\build\\intermediates\\cmake\\interpreterRelease\\obj\\armeabi-v7a\\libnative-lib.so",
-      "runtimeFiles": []
+      "runtimeFiles": [
+        "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\build\\intermediates\\cmake\\interpreterRelease\\obj\\armeabi-v7a\\libKalmanTracker.so",
+        "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\build\\intermediates\\cmake\\interpreterRelease\\obj\\armeabi-v7a\\libHungarianAlgorithm.so",
+        "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\opencv\\native\\libs\\armeabi-v7a\\libopencv_java4.so"
+      ]
     },
     "HungarianAlgorithm-Release-armeabi-v7a": {
       "artifactName": "HungarianAlgorithm",

@@ -15,19 +15,29 @@
  */
 package org.tensorflow.lite.examples.detection
 
+import android.app.Activity
 import android.graphics.*
+import android.hardware.camera2.CameraAccessException
+import android.hardware.camera2.CameraCharacteristics
+import android.hardware.camera2.CameraManager
 import android.media.ImageReader.OnImageAvailableListener
-import android.os.Debug
+import android.os.Build
 import android.os.SystemClock
 import android.util.Log
 import android.util.Size
+import android.util.SparseIntArray
 import android.util.TypedValue
+import android.view.Surface
 import android.view.View
 import android.widget.Toast
+import androidx.annotation.RequiresApi
+import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
 import org.tensorflow.lite.examples.detection.customview.OverlayView
 import org.tensorflow.lite.examples.detection.env.BorderedText
 import org.tensorflow.lite.examples.detection.env.ImageUtils
 import org.tensorflow.lite.examples.detection.env.Logger
+import org.tensorflow.lite.examples.detection.pose.InferenceInfoGraphic
+import org.tensorflow.lite.examples.detection.pose.PoseDetectorProcessor
 import org.tensorflow.lite.examples.detection.tflite.Detector
 import org.tensorflow.lite.examples.detection.tflite.TFLiteObjectDetectionAPIModel
 import org.tensorflow.lite.examples.detection.tracking.MultiBoxTracker
@@ -52,6 +62,29 @@ class DetectorActivity : CameraActivity(), OnImageAvailableListener {
     private var cropToFrameTransform: Matrix? = null
     private var tracker: MultiBoxTracker? = null
     private var borderedText: BorderedText? = null
+
+    private var fpsTimer : Long = 0
+    private val TEXT_COLOR = Color.WHITE
+    private val TEXT_SIZE = 60.0f
+    private val textPaint : Paint = Paint()
+    init {
+        textPaint.color = TEXT_COLOR
+        textPaint.textSize = TEXT_SIZE
+    }
+
+    // pose estimation
+    private val ORIENTATIONS = SparseIntArray()
+    init {
+        ORIENTATIONS.append(Surface.ROTATION_0, 0)
+        ORIENTATIONS.append(Surface.ROTATION_90, 90)
+        ORIENTATIONS.append(Surface.ROTATION_180, 180)
+        ORIENTATIONS.append(Surface.ROTATION_270, 270)
+    }
+
+    private var poseDetectorProcessor : PoseDetectorProcessor? = null
+    private var graphicOverlay: GraphicOverlay? = null
+
+
     public override fun onPreviewSizeChosen(size: Size?, rotation: Int) {
         val textSizePx = TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_DIP, resources.displayMetrics)
@@ -96,6 +129,14 @@ class DetectorActivity : CameraActivity(), OnImageAvailableListener {
             }
         }
         tracker!!.setFrameConfiguration(previewWidth, previewHeight, sensorOrientation!!)
+
+
+        val options = PoseDetectorOptions.Builder()
+                .setDetectorMode(PoseDetectorOptions.STREAM_MODE)
+                .build()
+        poseDetectorProcessor = PoseDetectorProcessor(this, options, true, true, true, false, true)
+        graphicOverlay = findViewById(R.id.pose_overlay)
+        graphicOverlay!!.setImageSourceInfo(cropSize, cropSize, false)
     }
 
     override fun processImage() {
@@ -109,11 +150,13 @@ class DetectorActivity : CameraActivity(), OnImageAvailableListener {
             return
         }
         computingDetection = true
-        LOGGER.i("Preparing image $currTimestamp for detection in bg thread.")
+        //LOGGER.i("Preparing image $currTimestamp for detection in bg thread.")
         rgbFrameBitmap!!.setPixels(getRgbBytes(), 0, previewWidth, 0, 0, previewWidth, previewHeight)
         readyForNextImage()
+
         val canvas = Canvas(croppedBitmap)
         canvas.drawBitmap(rgbFrameBitmap, frameToCropTransform, null)
+
         // For examining the actual TF input.
         if (SAVE_PREVIEW_BITMAP) {
             ImageUtils.saveBitmap(croppedBitmap)
@@ -122,20 +165,24 @@ class DetectorActivity : CameraActivity(), OnImageAvailableListener {
             LOGGER.i("Running detection on image $currTimestamp")
             val startTime = SystemClock.uptimeMillis()
             val results = detector!!.recognizeImage(croppedBitmap)
-            lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime
             cropCopyBitmap = Bitmap.createBitmap(croppedBitmap)
             val canvas = Canvas(cropCopyBitmap)
             val paint = Paint()
             paint.color = Color.RED
             paint.style = Paint.Style.STROKE
             paint.strokeWidth = 2.0f
+
+            if(graphicOverlay != null){
+                poseDetectorProcessor?.processBitmap(croppedBitmap, graphicOverlay!!)
+            }
+
             var minimumConfidence = MINIMUM_CONFIDENCE_TF_OD_API
             minimumConfidence = when (MODE) {
                 DetectorMode.TF_OD_API -> MINIMUM_CONFIDENCE_TF_OD_API
+                DetectorMode.YOLO4 -> MINIMUM_CONFIDENCE_YOLOv4
             }
 
             val mappedRecognitions: MutableList<Detector.Recognition> = ArrayList()
-
             for(result in results){
                 if(result.location != null && result.confidence >= minimumConfidence){
                     mappedRecognitions.add(result)
@@ -143,7 +190,6 @@ class DetectorActivity : CameraActivity(), OnImageAvailableListener {
             }
 
             val trackedRecognitions = trackObjects(mappedRecognitions, timestamp)
-
             for(result in trackedRecognitions){
                 val location = result.location
                 canvas.drawRect(location, paint)
@@ -151,16 +197,47 @@ class DetectorActivity : CameraActivity(), OnImageAvailableListener {
                 result.location = location
             }
 
+            lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime
+
             tracker!!.trackResults(trackedRecognitions, currTimestamp)
             trackingOverlay!!.postInvalidate()
             computingDetection = false
             runOnUiThread {
                 showFrameInfo(previewWidth.toString() + "x" + previewHeight)
                 showCropInfo(cropCopyBitmap?.getWidth().toString() + "x" + cropCopyBitmap?.getHeight())
-                showInference(lastProcessingTimeMs.toString() + "ms")
+                if(fpsTimer > 0){
+                    val sec = (SystemClock.uptimeMillis() - fpsTimer) * 0.001 // to sec
+                    showInference("${(1 / sec).toInt()}")
+                }
+                fpsTimer = SystemClock.uptimeMillis()
             }
         }
     }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @Throws(CameraAccessException::class)
+    private fun getRotationCompensation(cameraId: String, activity: Activity, isFrontFacing: Boolean): Int {
+        // Get the device's current rotation relative to its "native" orientation.
+        // Then, from the ORIENTATIONS table, look up the angle the image must be
+        // rotated to compensate for the device's rotation.
+        val deviceRotation = activity.windowManager.defaultDisplay.rotation
+        var rotationCompensation = ORIENTATIONS.get(deviceRotation)
+
+        // Get the device's sensor orientation.
+        val cameraManager = activity.getSystemService(CAMERA_SERVICE) as CameraManager
+        val sensorOrientation = cameraManager
+                .getCameraCharacteristics(cameraId)
+                .get(CameraCharacteristics.SENSOR_ORIENTATION)!!
+
+        if (isFrontFacing) {
+            rotationCompensation = (sensorOrientation + rotationCompensation) % 360
+        } else { // back-facing
+            rotationCompensation = (sensorOrientation - rotationCompensation + 360) % 360
+        }
+        return rotationCompensation
+    }
+
 
     var titleArray = mutableListOf<String>()
 
@@ -180,10 +257,8 @@ class DetectorActivity : CameraActivity(), OnImageAvailableListener {
             titleArray.add(results[i].title)
         }
 
-        Log.d("Kotlin", "titleArray : ${titleArray.size}")
 
         var outputArray = sort(inputArray)
-
 
         var outputList: MutableList<Detector.Recognition> = ArrayList()
         for(i in 0 until outputArray.size / 7){
@@ -194,8 +269,7 @@ class DetectorActivity : CameraActivity(), OnImageAvailableListener {
             val width = outputArray[i * 7 + 4]
             val height = outputArray[i * 7 + 5]
             val title = outputArray[i * 7 + 6].toInt()
-            Log.d("Kotlin", "i : ${i}  title : ${title}")
-            var rcg = Detector.Recognition(id, titleArray[title], confidence,  RectF(x, y, x + width, y + height));
+            var rcg = Detector.Recognition(id, titleArray[title], confidence, RectF(x, y, x + width, y + height));
             outputList.add(rcg)
         }
 
@@ -214,7 +288,7 @@ class DetectorActivity : CameraActivity(), OnImageAvailableListener {
     // Which detection model to use: by default uses Tensorflow Object Detection API frozen
     // checkpoints.
     private enum class DetectorMode {
-        TF_OD_API
+        TF_OD_API, YOLO4
     }
 
     override fun setUseNNAPI(isChecked: Boolean) {
@@ -247,10 +321,17 @@ class DetectorActivity : CameraActivity(), OnImageAvailableListener {
         private const val TF_OD_API_IS_QUANTIZED = true
         private const val TF_OD_API_MODEL_FILE = "detect.tflite"
         private const val TF_OD_API_LABELS_FILE = "labelmap.txt"
+
+        private const val YOLOv4_INPUT_SIZE = 416
+        private const val YOLOv4_IS_QUANTIZED = false
+        private const val YOLOv4_MODEL_FILE = "yolov4.tflite"
+        private const val YOLOv4_LABELS_FILE = "labelmap.txt"
+
         private val MODE = DetectorMode.TF_OD_API
 
         // Minimum detection confidence to track a detection.
         private const val MINIMUM_CONFIDENCE_TF_OD_API = 0.5f
+        private const val MINIMUM_CONFIDENCE_YOLOv4 = 0.5f
         private const val MAINTAIN_ASPECT = false
         private val DESIRED_PREVIEW_SIZE = Size(640, 480)
         private const val SAVE_PREVIEW_BITMAP = false

@@ -66,7 +66,11 @@
       ],
       "headers": [],
       "output": "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\build\\intermediates\\cmake\\interpreterDebug\\obj\\armeabi-v7a\\libnative-lib.so",
-      "runtimeFiles": []
+      "runtimeFiles": [
+        "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\build\\intermediates\\cmake\\interpreterDebug\\obj\\armeabi-v7a\\libKalmanTracker.so",
+        "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\build\\intermediates\\cmake\\interpreterDebug\\obj\\armeabi-v7a\\libHungarianAlgorithm.so",
+        "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\opencv\\native\\libs\\armeabi-v7a\\libopencv_java4.so"
+      ]
     }
   },
   "toolchains": {

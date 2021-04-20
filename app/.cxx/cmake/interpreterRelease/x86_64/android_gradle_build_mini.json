@@ -30,7 +30,11 @@
       "buildCommand": "C:\\Users\\JeongBoRa\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe -C \"C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\.cxx\\cmake\\interpreterRelease\\x86_64\" native-lib",
       "abi": "x86_64",
       "output": "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\build\\intermediates\\cmake\\interpreterRelease\\obj\\x86_64\\libnative-lib.so",
-      "runtimeFiles": []
+      "runtimeFiles": [
+        "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\build\\intermediates\\cmake\\interpreterRelease\\obj\\x86_64\\libKalmanTracker.so",
+        "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\build\\intermediates\\cmake\\interpreterRelease\\obj\\x86_64\\libHungarianAlgorithm.so",
+        "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\opencv\\native\\libs\\x86_64\\libopencv_java4.so"
+      ]
     }
   }
 }
