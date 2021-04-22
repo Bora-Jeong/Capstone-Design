@@ -97,8 +97,8 @@ abstract class VisionProcessorBase<T>(context: Context) : VisionImageProcessor {
     val frameStartMs = SystemClock.elapsedRealtime()
     requestDetectInImage(
       InputImage.fromBitmap(bitmap!!, 0),
-      graphicOverlay, /* originalCameraImage= */
-      null, /* shouldShowFps= */
+      graphicOverlay,
+      null,
       false,
       frameStartMs
     )

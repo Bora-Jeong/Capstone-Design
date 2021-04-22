@@ -16,7 +16,6 @@
 package org.tensorflow.lite.examples.detection
 
 import android.Manifest
-import android.app.Activity
 import android.app.Fragment
 import android.content.ContentUris
 import android.content.Context
@@ -38,22 +37,14 @@ import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.util.Log
 import android.util.Size
-import android.util.SparseIntArray
 import android.view.Surface
 import android.view.View
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.view.WindowManager
 import android.widget.*
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
-import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.FragmentActivity
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
-import org.tensorflow.lite.examples.detection.env.ImageUtils
-import org.tensorflow.lite.examples.detection.env.Logger
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
@@ -62,18 +53,18 @@ import com.github.nkzawa.engineio.client.transports.WebSocket
 import com.github.nkzawa.socketio.client.IO
 import com.github.nkzawa.socketio.client.IO.socket
 import com.github.nkzawa.socketio.client.Socket
-import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.pose.PoseDetection
-import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
-import java.io.File
-import kotlin.math.atan
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import org.opencv.calib3d.Calib3d
 import org.opencv.core.*
+import org.tensorflow.lite.examples.detection.env.ImageUtils
+import org.tensorflow.lite.examples.detection.env.Logger
 import org.tensorflow.lite.examples.detection.point.*
-import org.tensorflow.lite.examples.detection.pose.FrameMetadata
-import org.tensorflow.lite.examples.detection.pose.PoseDetectorProcessor
+import wseemann.media.FFmpegMediaMetadataRetriever
+import java.io.File
 import java.net.URISyntaxException
-import java.nio.ByteBuffer
+import kotlin.math.atan
+
 
 abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, PreviewCallback, CompoundButton.OnCheckedChangeListener, View.OnClickListener {
     protected var previewWidth = 0
@@ -101,7 +92,7 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, P
     private var apiSwitchCompat: SwitchCompat? = null
     private var threadsTextView: TextView? = null
 
-    // posent code
+    // 3D 좌표 구하기 위한 코드 (이전 PoseNet에 있었던 코드)
     private var isPointCloudDataLoaded = false
     var pointCloudData: PointCloudData? = null
     val jacksonMapper = jacksonObjectMapper()
@@ -158,7 +149,6 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, P
     val logDataHUD = mutableListOf<List<String>>()
     var baseTimestamp:Long = 0
     private var mSocket: Socket? = null
-
 
 
 
@@ -227,10 +217,8 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, P
         plusImageView?.setOnClickListener(this)
         minusImageView?.setOnClickListener(this)
 
-        //findViewById<Button>(R.id.btnImport).text = stringFromJNI()
 
-
-        findViewById<View>(R.id.btnImport).setOnClickListener { view: View? ->
+        findViewById<View>(R.id.btnImport).setOnClickListener {
             if(!isPointCloudDataLoaded) {
                 openPointCloud()
                 try {
@@ -254,14 +242,23 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, P
                 exportLog()
             }
         }
+
+
+        findViewById<View>(R.id.btnVideo).setOnClickListener{
+            openGallery()
+        }
     }
 
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
         super.onActivityResult(requestCode, resultCode, resultData)
-        if (requestCode == READ_REQUEST_CODE && resultCode == RESULT_OK && resultData != null) {
-            val uri = resultData.data ?: return
+        if(resultCode != RESULT_OK || resultData == null) return
+        if(requestCode == PICK_REQUEST_CODE){    // 동영상 선택
+            val uri = resultData.data
+        }
+        else if (requestCode == READ_REQUEST_CODE) {
+            val uri = resultData.data
             this.applicationContext.contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
             val jsonFile = File(getPathFromUri(uri))
             try {
@@ -335,6 +332,7 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, P
             }
         }
     }
+
 
     private fun getPathFromUri(uri: Uri): String? {
         val context = this.applicationContext
@@ -667,6 +665,21 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, P
                 }
 
         startActivityForResult(intent, READ_REQUEST_CODE)
+
+        var a = Intent(Intent.ACTION_GET_CONTENT)
+    }
+
+    private fun openGallery(){
+        if (Build.VERSION.SDK_INT < 19) {
+            val photoPickerIntent = Intent(Intent.ACTION_PICK)
+            photoPickerIntent.type = "image/* video/*"
+            startActivityForResult(photoPickerIntent, PICK_REQUEST_CODE)
+        } else {
+            val photoPickerIntent = Intent(Intent.ACTION_PICK)
+            photoPickerIntent.type = "*/*"
+            photoPickerIntent.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/*", "video/*"))
+            startActivityForResult(photoPickerIntent, PICK_REQUEST_CODE)
+        }
     }
 
 
@@ -674,6 +687,7 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, P
         imageConverter!!.run()
         return rgbBytes
     }
+
 
     protected val luminance: ByteArray?
         protected get() = yuvBytes[0]
@@ -765,7 +779,7 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, P
         super.onStart()
         LOGGER.d("onStart $this")
         val permissionStorage = ContextCompat.checkSelfPermission(
-               applicationContext,
+                applicationContext,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
         if (permissionStorage != PackageManager.PERMISSION_GRANTED) {
@@ -984,7 +998,6 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, P
     protected abstract val desiredPreviewFrameSize: Size?
     protected abstract fun setNumThreads(numThreads: Int)
     protected abstract fun setUseNNAPI(isChecked: Boolean)
-
 
     external fun stringFromJNI(): String
 

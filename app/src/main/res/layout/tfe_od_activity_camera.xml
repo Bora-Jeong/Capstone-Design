@@ -34,14 +34,25 @@
             android:layout_height="match_parent"
             tools:context="org.tensorflow.demo.CameraActivity" >
 
-            <Button
-                android:id="@+id/btnImport"
-                android:layout_width="50dp"
-                android:layout_height="31dp"
-                android:text="Import" />
         </FrameLayout>
 
     </RelativeLayout>
+
+    <Button
+        android:id="@+id/btnVideo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Video"
+        android:translationX="10dp"
+        android:translationY="600dp" />
+
+    <Button
+        android:id="@+id/btnImport"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Import"
+        android:translationX="100dp"
+        android:translationY="600dp" />
 
     <include
         android:id="@+id/bottom_sheet_layout"

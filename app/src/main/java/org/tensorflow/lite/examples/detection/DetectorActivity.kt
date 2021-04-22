@@ -31,6 +31,7 @@ import android.view.Surface
 import android.view.View
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.graphics.scale
 import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
 import org.tensorflow.lite.examples.detection.customview.OverlayView
 import org.tensorflow.lite.examples.detection.env.BorderedText
@@ -41,6 +42,7 @@ import org.tensorflow.lite.examples.detection.pose.PoseDetectorProcessor
 import org.tensorflow.lite.examples.detection.tflite.Detector
 import org.tensorflow.lite.examples.detection.tflite.TFLiteObjectDetectionAPIModel
 import org.tensorflow.lite.examples.detection.tracking.MultiBoxTracker
+import wseemann.media.FFmpegMediaMetadataRetriever
 import java.io.IOException
 import java.util.*
 
@@ -83,6 +85,7 @@ class DetectorActivity : CameraActivity(), OnImageAvailableListener {
 
     private var poseDetectorProcessor : PoseDetectorProcessor? = null
     private var graphicOverlay: GraphicOverlay? = null
+
 
 
     public override fun onPreviewSizeChosen(size: Size?, rotation: Int) {
@@ -134,11 +137,13 @@ class DetectorActivity : CameraActivity(), OnImageAvailableListener {
         val options = PoseDetectorOptions.Builder()
                 .setDetectorMode(PoseDetectorOptions.STREAM_MODE)
                 .build()
-        poseDetectorProcessor = PoseDetectorProcessor(this, options, true, true, true, false, true)
+        poseDetectorProcessor = PoseDetectorProcessor(this, options, true, true, false, false, true)
         graphicOverlay = findViewById(R.id.pose_overlay)
         graphicOverlay!!.setImageSourceInfo(cropSize, cropSize, false)
     }
 
+
+    // process camera frame
     override fun processImage() {
         ++timestamp
         val currTimestamp = timestamp
@@ -215,33 +220,9 @@ class DetectorActivity : CameraActivity(), OnImageAvailableListener {
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    @Throws(CameraAccessException::class)
-    private fun getRotationCompensation(cameraId: String, activity: Activity, isFrontFacing: Boolean): Int {
-        // Get the device's current rotation relative to its "native" orientation.
-        // Then, from the ORIENTATIONS table, look up the angle the image must be
-        // rotated to compensate for the device's rotation.
-        val deviceRotation = activity.windowManager.defaultDisplay.rotation
-        var rotationCompensation = ORIENTATIONS.get(deviceRotation)
-
-        // Get the device's sensor orientation.
-        val cameraManager = activity.getSystemService(CAMERA_SERVICE) as CameraManager
-        val sensorOrientation = cameraManager
-                .getCameraCharacteristics(cameraId)
-                .get(CameraCharacteristics.SENSOR_ORIENTATION)!!
-
-        if (isFrontFacing) {
-            rotationCompensation = (sensorOrientation + rotationCompensation) % 360
-        } else { // back-facing
-            rotationCompensation = (sensorOrientation - rotationCompensation + 360) % 360
-        }
-        return rotationCompensation
-    }
-
 
     var titleArray = mutableListOf<String>()
-
-    fun trackObjects(results: MutableList<Detector.Recognition>, frame: Long) : MutableList<Detector.Recognition> {
+    private fun trackObjects(results: MutableList<Detector.Recognition>, frame: Long) : MutableList<Detector.Recognition> {
 
         if(results.size == 0) return  results
 

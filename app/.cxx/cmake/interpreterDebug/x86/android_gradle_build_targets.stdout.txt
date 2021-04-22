@@ -1,7 +1,2 @@
 ninja: Entering directory `C:\Users\JeongBoRa\Documents\GitHub\Capstone-Design\app\.cxx\cmake\interpreterDebug\x86'
-[1/6] Building CXX object CMakeFiles/HungarianAlgorithm.dir/HungarianAlgorithm.cpp.o
-[2/6] Linking CXX shared library C:\Users\JeongBoRa\Documents\GitHub\Capstone-Design\app\build\intermediates\cmake\interpreterDebug\obj\x86\libHungarianAlgorithm.so
-[3/6] Building CXX object CMakeFiles/KalmanTracker.dir/KalmanTracker.cpp.o
-[4/6] Building CXX object CMakeFiles/native-lib.dir/native-lib.cpp.o
-[5/6] Linking CXX shared library C:\Users\JeongBoRa\Documents\GitHub\Capstone-Design\app\build\intermediates\cmake\interpreterDebug\obj\x86\libKalmanTracker.so
-[6/6] Linking CXX shared library C:\Users\JeongBoRa\Documents\GitHub\Capstone-Design\app\build\intermediates\cmake\interpreterDebug\obj\x86\libnative-lib.so
+ninja: no work to do.

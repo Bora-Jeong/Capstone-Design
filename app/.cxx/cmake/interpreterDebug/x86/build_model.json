@@ -171,7 +171,6 @@
       "project": {
         "compilerSettingsCacheFolder": "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\.cxx",
         "cxxFolder": "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\.cxx",
-        "ideBuildTargetAbi": "x86,armeabi-v7a,armeabi",
         "isBuildOnlyTargetAbiEnabled": true,
         "isCmakeBuildCohabitationEnabled": false,
         "isNativeCompilerSettingsCacheEnabled": false,
@@ -195,7 +194,10 @@
     "objFolder": "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\build\\intermediates\\cmake\\interpreterDebug\\obj",
     "variantName": "interpreterDebug",
     "validAbiList": [
-      "X86"
+      "ARMEABI_V7A",
+      "ARM64_V8A",
+      "X86",
+      "X86_64"
     ],
     "prefabDirectory": "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\.cxx\\cmake\\interpreterDebug\\prefab",
     "prefabPackageDirectoryList": []

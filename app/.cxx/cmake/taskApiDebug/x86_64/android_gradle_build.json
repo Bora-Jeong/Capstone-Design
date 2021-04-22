@@ -15,6 +15,25 @@
   ],
   "buildTargetsCommand": "C:\\Users\\JeongBoRa\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe  -C \"C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\.cxx\\cmake\\taskApiDebug\\x86_64\" {LIST_OF_TARGETS_TO_BUILD}",
   "libraries": {
+    "KalmanTracker-Debug-x86_64": {
+      "buildCommand": "C:\\Users\\JeongBoRa\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe -C \"C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\.cxx\\cmake\\taskApiDebug\\x86_64\" KalmanTracker",
+      "buildType": "debug",
+      "toolchain": "3522769163",
+      "abi": "x86_64",
+      "artifactName": "KalmanTracker",
+      "files": [
+        {
+          "src": "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\src\\main\\cpp\\KalmanTracker.cpp",
+          "flagsOrdinal": 2,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [],
+      "output": "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\build\\intermediates\\cmake\\taskApiDebug\\obj\\x86_64\\libKalmanTracker.so",
+      "runtimeFiles": [
+        "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\opencv\\native\\libs\\x86_64\\libopencv_java4.so"
+      ]
+    },
     "native-lib-Debug-x86_64": {
       "buildCommand": "C:\\Users\\JeongBoRa\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe -C \"C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\.cxx\\cmake\\taskApiDebug\\x86_64\" native-lib",
       "buildType": "debug",
@@ -33,25 +52,6 @@
       "runtimeFiles": [
         "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\build\\intermediates\\cmake\\taskApiDebug\\obj\\x86_64\\libKalmanTracker.so",
         "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\build\\intermediates\\cmake\\taskApiDebug\\obj\\x86_64\\libHungarianAlgorithm.so",
-        "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\opencv\\native\\libs\\x86_64\\libopencv_java4.so"
-      ]
-    },
-    "KalmanTracker-Debug-x86_64": {
-      "buildCommand": "C:\\Users\\JeongBoRa\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe -C \"C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\.cxx\\cmake\\taskApiDebug\\x86_64\" KalmanTracker",
-      "buildType": "debug",
-      "toolchain": "3522769163",
-      "abi": "x86_64",
-      "artifactName": "KalmanTracker",
-      "files": [
-        {
-          "src": "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\src\\main\\cpp\\KalmanTracker.cpp",
-          "flagsOrdinal": 2,
-          "workingDirectoryOrdinal": 0
-        }
-      ],
-      "headers": [],
-      "output": "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\app\\build\\intermediates\\cmake\\taskApiDebug\\obj\\x86_64\\libKalmanTracker.so",
-      "runtimeFiles": [
         "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\opencv\\native\\libs\\x86_64\\libopencv_java4.so"
       ]
     },

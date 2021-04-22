@@ -24,6 +24,7 @@ const val REQUEST_STORAGE_PERMISSION = 2
 const val REQUEST_BLUETOOTH_PERMISSION = 3
 const val REQUEST_FINE_LOCATION = 4
 const val READ_REQUEST_CODE = 42
+const val PICK_REQUEST_CODE = 20
 
 /** Model input shape for images.   */
 const val MODEL_WIDTH = 257

@@ -71,6 +71,7 @@ apply from:'download_model.gradle'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar','*.aar'])
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     interpreterImplementation project(":lib_interpreter")
     taskApiImplementation project(":lib_task_api")
     implementation 'androidx.appcompat:appcompat:1.0.0'
@@ -86,6 +87,8 @@ dependencies {
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.11.3'
     implementation 'com.github.nkzawa:socket.io-client:0.6.0'
     implementation 'com.github.doyaaaaaken:kotlin-csv-jvm:0.11.1'
+    implementation 'com.github.wseemann:FFmpegMediaMetadataRetriever-core:1.0.15'
+    implementation 'com.github.wseemann:FFmpegMediaMetadataRetriever-native:1.0.15'
     implementation project(path: ':opencv')
 
     // If you want to use the base sdk
