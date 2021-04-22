@@ -177,7 +177,6 @@
       "project": {
         "compilerSettingsCacheFolder": "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\.cxx",
         "cxxFolder": "C:\\Users\\JeongBoRa\\Documents\\GitHub\\Capstone-Design\\.cxx",
-        "ideBuildTargetAbi": "arm64-v8a,armeabi-v7a,armeabi",
         "isBuildOnlyTargetAbiEnabled": true,
         "isCmakeBuildCohabitationEnabled": false,
         "isNativeCompilerSettingsCacheEnabled": false,
