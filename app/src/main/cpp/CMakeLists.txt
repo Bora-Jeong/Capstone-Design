@@ -8,8 +8,7 @@ cmake_minimum_required(VERSION 3.10.2)
 # Declares and names the project.
 project("TFLite Object Detection Demo App")
 
-set(pathPROJECT C:/Users/JeongBoRa/Documents/GitHub/Capstone-Design)
-set(pathOPENCV ${pathPROJECT}/opencv)
+set(pathOPENCV ${CMAKE_CURRENT_SOURCE_DIR}../../../../../opencv)
 set(pathLIBOPENCV_JAVA ${pathOPENCV}/native/libs/${ANDROID_ABI}/libopencv_java4.so)
 
 set(CMAKE_VERBOSE_MAKEFILE on)

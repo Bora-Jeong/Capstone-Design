@@ -44,7 +44,6 @@ import android.view.WindowManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
-import androidx.core.content.ContextCompat
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
@@ -60,7 +59,6 @@ import org.opencv.core.*
 import org.tensorflow.lite.examples.detection.env.ImageUtils
 import org.tensorflow.lite.examples.detection.env.Logger
 import org.tensorflow.lite.examples.detection.point.*
-import wseemann.media.FFmpegMediaMetadataRetriever
 import java.io.File
 import java.net.URISyntaxException
 import kotlin.math.atan
@@ -160,6 +158,7 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, P
         //val toolbar = findViewById<Toolbar>(R.id.toolbar)
         //setSupportActionBar(toolbar)
         //supportActionBar!!.setDisplayShowTitleEnabled(false)
+
         if (hasPermission()) {
             setFragment()
         } else {
@@ -173,23 +172,23 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, P
         gestureLayout = findViewById(R.id.gesture_layout)
         sheetBehavior = BottomSheetBehavior.from(bottomSheetLayout)
         bottomSheetArrowImageView = findViewById(R.id.bottom_sheet_arrow)
-        val vto = gestureLayout?.getViewTreeObserver()
+        val vto = gestureLayout?.viewTreeObserver
         if (vto != null) {
             vto.addOnGlobalLayoutListener(
                     object : OnGlobalLayoutListener {
                         override fun onGlobalLayout() {
                             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                                gestureLayout?.getViewTreeObserver()?.removeGlobalOnLayoutListener(this)
+                                gestureLayout?.viewTreeObserver?.removeGlobalOnLayoutListener(this)
                             } else {
-                                gestureLayout?.getViewTreeObserver()?.removeOnGlobalLayoutListener(this)
+                                gestureLayout?.viewTreeObserver?.removeOnGlobalLayoutListener(this)
                             }
                             //                int width = bottomSheetLayout.getMeasuredWidth();
-                            val height = gestureLayout!!.getMeasuredHeight()
-                            sheetBehavior?.setPeekHeight(height)
+                            val height = gestureLayout!!.measuredHeight
+                            sheetBehavior?.peekHeight = height
                         }
                     })
         }
-        sheetBehavior?.setHideable(false)
+        sheetBehavior?.isHideable = false
         sheetBehavior?.setBottomSheetCallback(
                 object : BottomSheetCallback() {
                     override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -226,16 +225,16 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, P
                     opts.port = 3000
                     opts.transports = arrayOf(WebSocket.NAME)
                     mSocket = socket("http://172.16.201.243:3000", opts)
-                }catch (e: URISyntaxException){
+                } catch (e: URISyntaxException) {
                     Log.d("SocketIO", e.message)
                 }
                 mSocket!!.on(Socket.EVENT_CONNECT, onConnect)
-                mSocket!!.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
-                mSocket!!.on(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
+                mSocket!!.on(Socket.EVENT_CONNECT_ERROR, onConnectError)
+                mSocket!!.on(Socket.EVENT_CONNECT_TIMEOUT, onConnectError)
                 try {
                     mSocket!!.connect()
                     mSocket!!.on("receive hud data", onHUDMsg)
-                }catch (e: Exception){
+                } catch (e: Exception) {
                     Log.d("SocketIO", e.message)
                 }
             }else{
@@ -406,7 +405,7 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, P
                     )
                 }
             }
-            cameraToWorld = matRT;
+            cameraToWorld = matRT
             worldToCamera = cameraToWorld.inv()
             matRT = matRT.t()
 
@@ -665,8 +664,6 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, P
                 }
 
         startActivityForResult(intent, READ_REQUEST_CODE)
-
-        var a = Intent(Intent.ACTION_GET_CONTENT)
     }
 
     private fun openGallery(){
@@ -675,10 +672,17 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, P
             photoPickerIntent.type = "image/* video/*"
             startActivityForResult(photoPickerIntent, PICK_REQUEST_CODE)
         } else {
-            val photoPickerIntent = Intent(Intent.ACTION_PICK)
-            photoPickerIntent.type = "*/*"
-            photoPickerIntent.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/*", "video/*"))
-            startActivityForResult(photoPickerIntent, PICK_REQUEST_CODE)
+            //val photoPickerIntent = Intent(Intent.ACTION_PICK)
+            //photoPickerIntent.type = "*/*"
+            //photoPickerIntent.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/*", "video/*"))
+            //startActivityForResult(photoPickerIntent, PICK_REQUEST_CODE)
+
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+                type = "*/*"
+            }
+            intent.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/*", "video/*"))
+            startActivityForResult(intent, PICK_REQUEST_CODE)
         }
     }
 
@@ -778,13 +782,6 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, P
     public override fun onStart() {
         super.onStart()
         LOGGER.d("onStart $this")
-        val permissionStorage = ContextCompat.checkSelfPermission(
-                applicationContext,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-        )
-        if (permissionStorage != PackageManager.PERMISSION_GRANTED) {
-            //requestStoragePermission()
-        }
         super.onStart()
     }
 
@@ -832,33 +829,55 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, P
     override fun onRequestPermissionsResult(
             requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == PERMISSIONS_REQUEST) {
+        if (requestCode == PERMISSIONS_REQUEST_CAMERA) {
             if (allPermissionsGranted(grantResults)) {
                 setFragment()
             } else {
-                requestPermission()
+                requestPermission(requestCode, PERMISSION_CAMERA)
+            }
+        } else if (requestCode == PERMISSIONS_REQUEST_STORAGE) {
+            if (!allPermissionsGranted(grantResults)) {
+                requestPermission(requestCode, PERMISSION_STORAGE)
             }
         }
     }
 
     private fun hasPermission(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            checkSelfPermission(PERMISSION_CAMERA) == PackageManager.PERMISSION_GRANTED
+            checkSelfPermission(PERMISSION_CAMERA) == PackageManager.PERMISSION_GRANTED && checkSelfPermission(PERMISSION_STORAGE) == PackageManager.PERMISSION_GRANTED
         } else {
             true
         }
     }
 
-    private fun requestPermission() {
+    private fun requestPermission(requestCode: Int, requestPermission: String) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (shouldShowRequestPermissionRationale(PERMISSION_CAMERA)) {
                 Toast.makeText(
                         this@CameraActivity,
-                        "Camera permission is required for this demo",
+                        "Permission is required for this demo",
                         Toast.LENGTH_LONG)
                         .show()
             }
-            requestPermissions(arrayOf(PERMISSION_CAMERA), PERMISSIONS_REQUEST)
+            requestPermissions(arrayOf(requestPermission), requestCode)
+        }
+    }
+
+    private fun requestPermission() {
+        val requestPermissions = mutableListOf<String>()
+        var requestCode = 0
+
+        if (checkSelfPermission(PERMISSION_CAMERA) == PackageManager.PERMISSION_DENIED) {
+            requestPermissions.add(PERMISSION_CAMERA)
+            requestCode += PERMISSIONS_REQUEST_CAMERA
+        }
+        if (checkSelfPermission(PERMISSION_STORAGE) == PackageManager.PERMISSION_DENIED) {
+            requestPermissions.add(PERMISSION_STORAGE)
+            requestCode += PERMISSIONS_REQUEST_STORAGE
+        }
+
+        if (requestCode > 0) {
+            requestPermissions(requestPermissions.toTypedArray(), requestCode)
         }
     }
 
@@ -1006,9 +1025,12 @@ abstract class CameraActivity : AppCompatActivity(), OnImageAvailableListener, P
             System.loadLibrary("native-lib")
             System.loadLibrary("KalmanTracker")
         }
+
         private val LOGGER = Logger()
-        private const val PERMISSIONS_REQUEST = 1
+        private const val PERMISSIONS_REQUEST_CAMERA = 1
+        private const val PERMISSIONS_REQUEST_STORAGE = 2
         private const val PERMISSION_CAMERA = Manifest.permission.CAMERA
+        private const val PERMISSION_STORAGE = Manifest.permission.WRITE_EXTERNAL_STORAGE
         private fun allPermissionsGranted(grantResults: IntArray): Boolean {
             for (result in grantResults) {
                 if (result != PackageManager.PERMISSION_GRANTED) {
